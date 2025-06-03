@@ -13,31 +13,97 @@ class ProductScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
+          shadowColor: Colors.green,
+          elevation: 10,
+          centerTitle: true,
           title: Text(
             "Products",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+              fontSize: 30,
+            ),
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.black,
         ),
         body: BlocBuilder<AllProductsBloc, AllProductsState>(
           builder: (context, state) {
             if (state is AllProductsLoading) {
-              return Center(child: CircularProgressIndicator());
+              return Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              );
             } else if (state is AllProductsLoaded) {
-              return ListView.builder(
+              return GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 20,
+                ),
                 itemCount: state.products.length,
-                itemBuilder: (_, index) {
+                itemBuilder: (context, index) {
                   final product = state.products[index];
-                  return ListTile(
-                    title: Text(
-                      product.title,
-                      style: TextStyle(color: Colors.white),
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      right: 15,
+                      left: 15,
+                      top: 10,
                     ),
-                    subtitle: Text(
-                      '${product.price} \$',
-                      style: TextStyle(color: Colors.grey),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(color: Colors.green, blurRadius: 15),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.network(
+                              product.image,
+                              height: 80,
+                              width: 100,
+                              fit: BoxFit.cover,
+                              errorBuilder:
+                                  (context, error, stackTrace) =>
+                                      Icon(Icons.error, color: Colors.red),
+                              loadingBuilder: (
+                                context,
+                                child,
+                                loadingProgress,
+                              ) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.green,
+                                    value:
+                                        loadingProgress.expectedTotalBytes !=
+                                                null
+                                            ? loadingProgress
+                                                    .cumulativeBytesLoaded /
+                                                loadingProgress
+                                                    .expectedTotalBytes!
+                                            : null,
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              product.title,
+                              style: TextStyle(color: Colors.green),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              '\$${product.price}',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    leading: Image.network(product.image, width: 50),
                   );
                 },
               );
