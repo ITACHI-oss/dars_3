@@ -22,6 +22,6 @@ Future<void> setupLocator() async {
 
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(dio: sl()));
 
-  sl.registerFactory(() => AllProductsBloc(sl()));
-  sl.registerFactory(() => SingleProductBloc(sl()));
+  sl.registerFactory<AllProductsBloc>(() => AllProductsBloc(sl()));
+  sl.registerFactory<SingleProductBloc>(() => SingleProductBloc(sl()));
 }
